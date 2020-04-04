@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+	{% block content %}
+		{% include 'inc/question.html' %}
+		<h5 style="margin-bottom: 15px; margin-top: 10px;">Answers({{ answers|length }})</h5>
+
+		{% for answer in answers %}
+      {% include 'inc/answer.html' %}
+		{% endfor %}
+
+	{% endblock content %}

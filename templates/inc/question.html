@@ -1,0 +1,37 @@
+{% load static %}
+
+<div class="card p-2 m-3">
+	<h5> <a href="{% url 'question' qid=question.id %}">{{question.title}}</a></h5>
+
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-1 mx-0 p-0">
+					<div class="row">
+					<img src="{% static 'img/cat.jpg' %}" width="64" height="64" class=" img-thumbnail">
+					</div>
+
+					<div class="row  pl-2 ">
+						<button type="button" class="btn btn-default p-1" aria-label="Left Align">
+							<span class="oi oi-chevron-top" aria-hidden="true"></span>
+						</button>
+						<button type="button" class="btn btn-default p-1" aria-label="Left Align">
+							<span class="oi oi-chevron-bottom" aria-hidden="true"></span>
+						</button>
+					</div>
+						<div class="row pl-4 h-1">
+							<h5>{{ question.like }}</h5>
+						</div>
+					</div>
+
+					<div class="col-10">
+						<p class="card-text">{{ question.body }}</p>
+						<a href="#" >answers({{ question.total_answers }})</a>
+							Tags:
+						{% for tag in question.tags %}
+							<a href="{% url 'tag' tag_name=tag %}" >{{tag}}</a>
+						{% endfor %}
+
+				</div>
+			</div>
+		</div>
+</div>

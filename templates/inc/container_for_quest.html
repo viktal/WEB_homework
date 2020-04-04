@@ -1,0 +1,12 @@
+{% load static %}
+
+<div class="card-header">
+  <ul class="nav nav-tabs card-header-tabs">
+    <li class="nav-item">
+      <a class="{{ new_css_classes }}" href="{% url 'index' %}">New</a>
+    </li>
+    <li class="nav-item">
+      <a class="{{ hot_css_classes }}" href="{% url 'hot' %}">Hot</a>
+    </li>
+  </ul>
+</div>

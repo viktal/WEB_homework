@@ -1,0 +1,23 @@
+{% load static %}
+
+<div class="container-fluid">
+    <nav class="row navbar navbar-expand-md navbar-dark bg-dark">
+      <a class="col-3 navbar-brand" href="#">AskMe</a>
+      <div class="col-9 d-flex justify-content-end">
+        <form class="form-inline">
+          <input class="form-control mr-2" type="text" placeholder="Search" aria-label="Search">
+
+        <button class="btn btn-secondary" type="submit">Search</button>
+        </form>
+
+        <div class="media ml-3 my-0">
+          <img src="{% static 'img/cat.jpg' %}" width="40" height="40" class=" img-thumbnail">
+          <div class="media-body">
+            <h6 class="mt-0 ml-2 text-light">Bob1234</h6>
+            <button type="button" class="btn btn-primary btn-sm ml-2">Settings</button>
+            <button type="button" class="btn btn-primary btn-sm ">LogOut</button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>

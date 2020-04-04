@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-10">
+      <h3>Questions</h3>
+    </div>
+    {% include 'inc/but_ask.html' %}
+  </div>
+
+  <div class="card text my-2">
+
+    {% include 'inc/container_for_quest.html' with new_css_classes="nav-link" hot_css_classes="nav-link active"%}
+
+    <div class="body">
+
+     {% for question in questions %}
+      {% include 'inc/question.html' %}
+     {% endfor %}
+
+    </div>
+  </div>
+{% include 'inc/paginator.html' %}
+
+{% endblock content %}
