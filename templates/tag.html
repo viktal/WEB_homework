@@ -6,10 +6,10 @@
       <a href="{% url 'tag' tag_name=tag_name %}"><h3 style="margin-bottom: 15px;">Tag: {{tag_name}}</h3></a>
 
     </div>
-    {% include 'inc/but_ask.html' %}
+    {% include 'inc/ask_button.html' %}
   </div>
 
-     {% for question in questions %}
+     {% for question in page_obj %}
       {% include 'inc/question.html' %}
      {% endfor %}
 

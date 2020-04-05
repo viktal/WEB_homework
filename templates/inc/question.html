@@ -25,7 +25,7 @@
 
 					<div class="col-10">
 						<p class="card-text">{{ question.body }}</p>
-						<a href="#" >answers({{ question.total_answers }})</a>
+						<a href="{% url 'question' qid=question.id %}" >answers({{ question.total_answers }})</a>
 							Tags:
 						{% for tag in question.tags %}
 							<a href="{% url 'tag' tag_name=tag %}" >{{tag}}</a>
