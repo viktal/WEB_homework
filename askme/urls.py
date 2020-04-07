@@ -16,7 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from app import views
-
+from django.conf.urls.static import static
+from askme import settings
 
 urlpatterns = [
     path('index/', views.index, name='index'),
@@ -25,6 +26,8 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('settings/', views.settings, name='settings'),
     path('ask/', views.ask, name='ask'),
+    path('admin/', admin.site.urls),
     path('question/<int:qid>/', views.question, name='question'),
     path('tag/<str:tag_name>/', views.tag, name='tag'),
-]
+
+] + static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)

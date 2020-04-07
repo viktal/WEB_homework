@@ -2,10 +2,12 @@
 
 	{% block content %}
 		{% include 'inc/question.html' %}
-		<h5 style="margin-bottom: 15px; margin-top: 10px;">Answers({{ answers|length }})</h5>
+		<h5 style="margin-bottom: 15px; margin-top: 10px;">Answers({{ page_obj|length }})</h5>
 
-		{% for answer in answers %}
+		{% for answer in page_obj %}
       {% include 'inc/answer.html' %}
 		{% endfor %}
+
+{% include 'inc/paginator.html' %}
 
 	{% endblock content %}

@@ -17,11 +17,7 @@
   <div class="row">
     <h4>Best users</h4> <br>
     <h5>
-      <a href="#" class="badge badge-primary">Bob</a>
-      <a href="#" class="badge badge-primary">Alisa</a>
-      <a href="#" class="badge badge-primary">Mary</a>
-      <a href="#" class="badge badge-primary">Jack</a>
-      <a href="#" class="badge badge-primary">Nik</a>
+      {{ best_user.all|join:" | " }}
     </h5>
   </div>
 </div>

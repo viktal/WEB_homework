@@ -5,7 +5,7 @@
       <div class="row justify-content-center">
         <div class="col-1 mx-0 p-0">
           <div class="row">
-            <img src="{% static 'img/cat.jpg' %}" width="64" height="64" class="img-thumbnail">
+            <img src="{{ answer.author.avatar.url }}" width="64" height="64" class="img-thumbnail">
           </div>
 
           <div class="row  pl-2 ">
@@ -17,17 +17,18 @@
             </button>
           </div>
           <div class="row pl-4 h-1">
-            <h5>32</h5>
+            <h5>{{ answer.currating }}</h5>
           </div>
         </div>
 
         <div class="col-10">
-            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                   tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur
-              adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <p class="card-text">{{ answer.text }}</p>
             <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
             <label class="form-check-label" for="defaultCheck1">
+              {% if answer.is_correct %}
               Correct answer!
+              {% endif %}
+
             </label>
         </div>
       </div>
