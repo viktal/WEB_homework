@@ -14,8 +14,11 @@
 </head>
 
 <body>
-
-  {% include 'inc/navbar.html' %}
+  {% if request.user.is_authenticated %}
+    {% include 'inc/navbar_for_user.html' %}
+  {% else %}
+    {% include 'inc/navbar.html' %}
+  {% endif %}
 
   <main role="main" class="container">
 

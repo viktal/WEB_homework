@@ -1,13 +1,32 @@
 {% extends 'base.html' %}
+{% load bootstrap4 %}
 
-	{% block content %}
-		{% include 'inc/question.html' %}
-		<h5 style="margin-bottom: 15px; margin-top: 10px;">Answers({{ page_obj|length }})</h5>
+{% block content %}
+{% include 'inc/question.html' %}
+<h5 style="margin-bottom: 15px; margin-top: 10px;"> Answers(
+  {% if question.count_answers is None %}
+  	0
+  {% else %}
+  	{{ question.count_answers }}
+  {% endif %}
+  )</h5>
 
-		{% for answer in page_obj %}
-      {% include 'inc/answer.html' %}
-		{% endfor %}
-
+{% for answer in page_obj %}
+{% include 'inc/answer.html' %}
+{% endfor %}
 {% include 'inc/paginator.html' %}
+<form method="post" novalidate>
+  {% csrf_token %}
 
-	{% endblock content %}
+  {% bootstrap_form form %}
+  <a name="{{anchor}}"></a>
+  {% buttons %}
+  <button class="btn btn-primary" href="{% url 'question' qid=question.id %}#{{anchor}}" type="submit">
+    Save
+  </button>
+  {% endbuttons %}
+
+</form>
+
+
+{% endblock content %}

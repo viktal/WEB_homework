@@ -2,7 +2,7 @@
 
 <div class="container-fluid">
     <nav class="row navbar navbar-expand-md navbar-dark bg-dark">
-      <a class="col-3 navbar-brand" href="#">AskMe</a>
+      <a class="col-3 navbar-brand" href="{% url 'index' %}">AskMe</a>
       <div class="col-9 d-flex justify-content-end">
         <form class="form-inline">
           <input class="form-control mr-2" type="text" placeholder="Search" aria-label="Search">
@@ -12,9 +12,16 @@
         <div class="media ml-3 my-0">
           <img src="{% static 'img/cat.jpg' %}" width="40" height="40" class=" img-thumbnail">
           <div class="media-body">
-            <h6 class="mt-0 ml-2 text-light">Bob1234</h6>
-            <button type="button" class="btn btn-primary btn-sm ml-2">Settings</button>
-            <button type="button" class="btn btn-primary btn-sm ">LogOut</button>
+            <h6 class="mt-0 ml-2 text-light"> {{ request.user.username }} </h6>
+
+            <button type="button" class="btn btn-primary btn-sm ml-2">
+              <a href="{% url 'settings' %}" class="text-reset"> Settings </a>
+            </button>
+
+            <button type="button" class="btn btn-primary btn-sm ">
+              <a href="{% url 'logout' %}" class="text-reset">LogOut</a>
+            </button>
+
           </div>
         </div>
       </div>

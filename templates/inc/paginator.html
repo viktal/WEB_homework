@@ -3,26 +3,34 @@
 <div class="pagination">
   <span class="step-links">
     {% if page_obj.has_previous %}
-      <button type="button" class="btn btn-secondary mt-3 mx-1 mb-5">
-        <a href="?page={{ page_obj.previous_page_number }}" class="text-reset">prev</a>
+      <button class="btn btn-outline-secondary mt-3 mx-1 mb-5" type="button">
+        <a class="text-reset" href="?page={{ page_obj.previous_page_number }}">prev</a>
       </button>
-      <button type="button" class="btn btn-secondary mt-3 mx-1 mb-5">
-        <a href="?page=1" class="text-reset">1</a>
+      <button class="btn btn-outline-secondary mt-3 mx-1 mb-5" type="button">
+        <a class="text-reset" href="?page=1">1</a>
       </button>
     {% endif %}
 
-    <span class="current">
-       <button type="button" class="btn btn-light btn-outline-secondary mt-3 mx-1 mb-5">
-          <a href="?page={{ page_obj.number }}" class="text-reset">{{ page_obj.number }}</a>
-        </button>
-    </span>
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <span class="current">
+         <button class="btn btn-secondary mt-3 mx-1 mb-5" type="button">
+            <a class="text-reset" href="?page={{ num }}">{{ num }}</a>
+          </button>
+        </span>
+      {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' and num != 1 and num != page_obj.paginator.num_pages%}
+          <button class="btn btn-light btn-outline-secondary mt-3 mx-1 mb-5" type="button">
+            <a class="text-reset" href="?page={{ num }}">{{ num }}</a>
+          </button>
+      {% endif %}
+    {% endfor %}
 
     {% if page_obj.has_next %}
-      <button type="button" class="btn btn-secondary mt-3 mx-1 mb-5">
-        <a href="?page={{ page_obj.paginator.num_pages }}" class="text-reset">{{page_obj.paginator.num_pages}}</a>
+      <button class="btn btn-outline-secondary mt-3 mx-1 mb-5" type="button">
+        <a class="text-reset" href="?page={{ page_obj.paginator.num_pages }}">{{page_obj.paginator.num_pages}}</a>
       </button>
-      <button type="button" class="btn btn-secondary mt-3 mx-1 mb-5">
-        <a href="?page={{ page_obj.next_page_number }}" class="text-reset">next</a>
+      <button class="btn btn-outline-secondary mt-3 mx-1 mb-5" type="button">
+        <a class="text-reset" href="?page={{ page_obj.next_page_number }}">next</a>
       </button>
 
     {% endif %}

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bootstrap4',
     'app',
 ]
 
@@ -127,3 +128,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(STATICFILES_DIRS[0], 'media')
 
 AUTH_USER_MODEL = 'app.User'
+
+LOGIN_URL = '/login/'
+LOGOUT_URL = '/index/'

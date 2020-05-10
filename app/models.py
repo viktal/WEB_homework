@@ -4,18 +4,27 @@ from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Subquery, OuterRef, Count
 from django.utils import timezone
 
 
 class TagManager(models.Manager):
     def popular(self, topk=10):
-        return Tag.objects.annotate(counts=models.Count('qtags')).order_by("-counts")[:topk]
+            return Tag.objects.annotate(counts=models.Count('qtags')).order_by("-counts")[:topk]
 
 
 class QuestionManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(is_active=True).prefetch_related('ratings').\
-            annotate(currating=models.Sum('ratings__rate'))
+        qs = super().get_queryset().filter(is_active=True)
+        answers_per_question = Answer.objects.get_rawqueryset()\
+                                             .filter(question=OuterRef("pk"))\
+                                             .values('question_id')\
+                                             .annotate(c=Count("*")).values('c')
+        qs = qs.annotate(
+            count_answers=Subquery(answers_per_question),
+            currating=models.Sum('ratings__rate')
+        )
+        return qs
 
     def hot(self):
         return self.get_queryset().order_by("-currating")
@@ -25,6 +34,9 @@ class QuestionManager(models.Manager):
 
 
 class AnswerManager(models.Manager):
+    def get_rawqueryset(self):
+        return super().get_queryset()
+
     def get_queryset(self):
         return super().get_queryset().prefetch_related('ratings')\
             .annotate(currating=models.Sum('ratings__rate'))
@@ -46,6 +58,8 @@ class Tag(models.Model):
         constraints = [
             models.UniqueConstraint(fields=('title',), name="no title dups")
         ]
+        #delete
+        #индексы по нескольким полям
         indexes = [
             models.Index(fields=('title',))
         ]
@@ -82,10 +96,10 @@ class Rating(models.Model):
 class Question(models.Model):
     objects = QuestionManager()
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quser')
-    title = models.CharField(max_length=120, verbose_name="Заголовок вопроса")
-    text = models.TextField(verbose_name="Полное описание вопроса")
-    create_date = models.DateTimeField(default=timezone.now, verbose_name="Время создания вопроса")
-    is_active = models.BooleanField(default=True, verbose_name="Доступность вопроса")
+    title = models.CharField(max_length=120, verbose_name="Title")
+    text = models.TextField(verbose_name="Text")
+    create_date = models.DateTimeField(default=timezone.now, verbose_name="Time")
+    is_active = models.BooleanField(default=True, verbose_name="Availability")
 
     ratings = GenericRelation(Rating)
     tags = models.ManyToManyField(Tag, blank=True, related_name='qtags')
@@ -104,7 +118,7 @@ class Answer(models.Model):
     objects = AnswerManager()
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    text = models.TextField(verbose_name=u"Полное описание ответа")
+    text = models.TextField(verbose_name="Your answer")
     create_date = models.DateTimeField(default=timezone.now, verbose_name=u"Время создания")
     is_right = models.BooleanField(default=True, verbose_name=u"Правильность ответа")
     ratings = GenericRelation(Rating)
