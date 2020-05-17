@@ -1,29 +1,56 @@
-from __future__ import unicode_literals
-from datetime import datetime
 from django.contrib.auth.models import AbstractUser, UserManager
-from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from django.db import models
 from django.db.models import Subquery, OuterRef, Count
 from django.utils import timezone
 
 
 class TagManager(models.Manager):
     def popular(self, topk=10):
-            return Tag.objects.annotate(counts=models.Count('qtags')).order_by("-counts")[:topk]
+        return Tag.objects.annotate(counts=models.Count('qtags')).order_by("-counts")[:topk]
 
 
 class QuestionManager(models.Manager):
     def get_queryset(self):
         qs = super().get_queryset().filter(is_active=True)
-        answers_per_question = Answer.objects.get_rawqueryset()\
-                                             .filter(question=OuterRef("pk"))\
-                                             .values('question_id')\
-                                             .annotate(c=Count("*")).values('c')
+        return qs
+
+    def annotate_user_rate(self, qs, user):
+        user_rate = Rating.objects.get_queryset() \
+            .filter(object_id=OuterRef("pk"),
+                    content_type=ContentType.objects.get_for_model(Question),
+                    author=user) \
+            .values('rate')
         qs = qs.annotate(
-            count_answers=Subquery(answers_per_question),
-            currating=models.Sum('ratings__rate')
+            user_rate=Subquery(user_rate)
         )
+        return qs
+
+    def annotate_answers_per_question(self, qs):
+        answers_per_question = Answer.objects.get_rawqueryset() \
+            .filter(question=OuterRef("pk")) \
+            .values('question_id') \
+            .annotate(c=Count("*")).values('c')
+        qs = qs.annotate(
+            count_answers=Subquery(answers_per_question)
+        )
+        return qs
+
+    def annotate_currating(self, qs):
+        currating = Rating.objects.get_queryset() \
+            .filter(object_id=OuterRef("pk"), content_type=ContentType.objects.get_for_model(Question)) \
+            .values('object_id') \
+            .annotate(c=models.Sum('rate'))\
+            .values('c')
+        qs = qs.annotate(
+            currating=Subquery(currating)
+        )
+        return qs
+    
+    def annotate_all(self, qs):
+        qs = self.annotate_currating(qs)
+        qs = self.annotate_answers_per_question(qs)
         return qs
 
     def hot(self):
@@ -37,9 +64,27 @@ class AnswerManager(models.Manager):
     def get_rawqueryset(self):
         return super().get_queryset()
 
-    def get_queryset(self):
-        return super().get_queryset().prefetch_related('ratings')\
-            .annotate(currating=models.Sum('ratings__rate'))
+    def annotate_user_rate(self, qs, user):
+        user_rate = Rating.objects.get_queryset() \
+            .filter(object_id=OuterRef("pk"),
+                    content_type=ContentType.objects.get_for_model(Answer),
+                    author=user) \
+            .values('rate')
+        qs = qs.annotate(
+            user_rate=Subquery(user_rate)
+        )
+        return qs
+
+    def annotate_currating(self, qs):
+        currating = Rating.objects.get_queryset() \
+            .filter(object_id=OuterRef("pk"), content_type=ContentType.objects.get_for_model(Answer)) \
+            .values('object_id') \
+            .annotate(c=models.Sum('rate'))\
+            .values('c')
+        qs = qs.annotate(
+            currating=Subquery(currating)
+        )
+        return qs
 
 
 class MyUserManager(UserManager):
@@ -57,11 +102,6 @@ class Tag(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=('title',), name="no title dups")
-        ]
-        #delete
-        #индексы по нескольким полям
-        indexes = [
-            models.Index(fields=('title',))
         ]
 
 
@@ -86,10 +126,12 @@ class Rating(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['object_id', 'content_type', 'author']),
+            models.Index(fields=['content_type', 'object_id']),
+            models.Index(fields=['author']),
         ]
         constraints = [
-            models.UniqueConstraint(fields=('object_id', 'content_type', 'author'), name="one user - one rating")
+            models.UniqueConstraint(fields=('object_id', 'content_type', 'author'),
+                                    name="one user - one rating")
         ]
 
 
@@ -111,6 +153,8 @@ class Question(models.Model):
         ordering = ['-create_date']
         indexes = [
             models.Index(fields=['is_active']),
+            # models.Index(fields=['tags']),
+            # models.Index(fields=['-ratings']),
         ]
 
 
@@ -119,8 +163,8 @@ class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField(verbose_name="Your answer")
-    create_date = models.DateTimeField(default=timezone.now, verbose_name=u"Время создания")
-    is_right = models.BooleanField(default=True, verbose_name=u"Правильность ответа")
+    create_date = models.DateTimeField(default=timezone.now, verbose_name="Creation time")
+    is_right = models.BooleanField(default=False)
     ratings = GenericRelation(Rating)
 
     def __str__(self):
@@ -128,7 +172,6 @@ class Answer(models.Model):
 
     class Meta:
         ordering = ['-create_date']
-
-        indexes = [
-            models.Index(fields=['question']),
-        ]
+        # indexes = [
+        #     models.Index(fields=['question', 'ratings']),
+        # ]

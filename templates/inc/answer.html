@@ -11,21 +11,55 @@
           <img class="img-thumbnail mx-2" height="64" src="{{ answer.author.avatar.url }}" width="64">
         </div>
 
-        <div class="row pl-3 pane">
-          <button aria-label="Left Align" class="btn btn-xs p-1" type="button">
-            <i aria-hidden="true" class="oi oi-chevron-top like-click" like-id={{answer.id}}></i>
-          </button>
+        {% if request.user.is_authenticated %}
+          {% if answer.user_rate > 0 %}
+            <div class="row pl-3 pane">
+              <button aria-label="Left Align" class="btn btn-xs p-1" type="button" style="color: #12b706">
+                <i aria-hidden="true" class="oi oi-chevron-top"></i>
+              </button>
+              <button aria-label="Left Align" class="btn btn-default p-1" type="button" style="color: #525252">
+                <span aria-hidden="true" class="oi oi-chevron-bottom"></span>
+              </button>
+            </div>
+          {% elif answer.user_rate < 0 %}
+            <div class="row pl-3 pane">
+              <button aria-label="Left Align" class="btn btn-xs p-1" type="button" style="color: #525252">
+                <i aria-hidden="true" class="oi oi-chevron-top"></i>
+              </button>
+              <button aria-label="Left Align" class="btn btn-default p-1" type="button" style="color: #e51f09">
+                <span aria-hidden="true" class="oi oi-chevron-bottom"></span>
+              </button>
+            </div>
+          {% else %}
+            <div class="row pl-3 pane">
+            <button aria-label="Left Align" class="btn btn-xs p-1" type="button" style="color: #525252">
+              <i aria-hidden="true" class="oi oi-chevron-top anlike-click" anlike-id={{answer.id}}></i>
+            </button>
 
-          <button aria-label="Left Align" class="btn btn-default p-1" type="button">
-            <span aria-hidden="true" class="oi oi-chevron-bottom dislike-click" dislike-id={{answer.id}}></span>
-          </button>
-        </div>
+            <button aria-label="Left Align" class="btn btn-default p-1" type="button" style="color: #525252">
+               <i aria-hidden="true" class="oi oi-chevron-bottom andislike-click" andislike-id={{answer.id}}></i>
+            </button>
+          </div>
+          {% endif %}
+
+        {% else %}
+          <div class="row pl-3 pane">
+            <button aria-label="Left Align" class="btn btn-xs p-1" type="button" style="color: #525252">
+              <i aria-hidden="true" class="oi oi-chevron-top"></i>
+            </button>
+
+            <button aria-label="Left Align" class="btn btn-default p-1" type="button" style="color: #525252">
+               <i aria-hidden="true" class="oi oi-chevron-bottom"></i>
+            </button>
+          </div>
+        {% endif %}
+
       </div>
 
       <div class="col-10">
         <div class="row text-muted">
           <div class="col-8">
-            {{answer.author}}
+            {{ answer.author }}
           </div>
           <div class="col text-right">
             <cite>{{ answer.create_date }}</cite>
@@ -36,27 +70,29 @@
 
         <div class="row ml-1">
           <div class="col-1 m-0 p-0">
-            <h5 id={{question.id}}>
-              {% if answer.currating is None %}
-              0
-              {% elif answer.currating > 0%}
-                 +{{ answer.currating }}
-              {% else %}
-                {{ answer.currating }}
-              {% endif %}
+            <h5 id={{ answer.id }}>
+              {{ answer.currating|default_if_none:0|stringformat:"+d" }}
             </h5>
           </div>
+
+          <div class="col-5" id='answer-{{ answer.id }}'>
+            <div class={{ answer.is_right|yesno:"visible,invisible" }} style="display:inline-block">
+              <i aria-hidden="true" class="oi oi-check like-click" correct-id=answer-{{ question.id }}></i>
+            </div>
+
+            {% if not answer.is_right and request.user == question.author %}
+              <div class="visible" style="display:inline-block">
+            {% else %}
+              <div class="invisible" style="display:inline-block">
+            {% endif %}
+            <button class="btn btn-outline-primary btn-sm correct-click" correct-id=answer-{{ answer.id }}
+                    type="button">
+              Mark as correct
+            </button>
+            </div>
+            </div>
+          </div>
         </div>
-
-
       </div>
-
-
-      <label>
-        {% if answer.is_right %}
-        Correct answer!
-        {% endif %}
-      </label>
     </div>
   </div>
-</div>

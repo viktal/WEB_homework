@@ -12,5 +12,5 @@ class Command(BaseCommand):
         print('finish generate users, start generate tags')
         gen_tags().handle(10000, *args, **options)
         print('finish generate tags, start generate question')
-        gen_quest().handle(1000, 10, *args, **options)
+        gen_quest().handle(100000, 10, *args, **options)
         print('finish generate question')

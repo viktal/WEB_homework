@@ -2,6 +2,7 @@ import random
 from django.core.management.base import BaseCommand
 from app.models import Question, Tag, User, Answer, Rating
 from faker import Faker
+from tqdm import tqdm
 
 
 def sample(elements, k):
@@ -21,6 +22,7 @@ class Command(BaseCommand):
             ) for _ in range(counts_question)]
         questions = Question.objects.bulk_create(questions)
         questions = list(Question.objects.all())
+        print("\tquestions are generated")
         question_tags_relation = Question.tags.through
         relations = []
 
@@ -28,9 +30,11 @@ class Command(BaseCommand):
             relations.extend(question_tags_relation(question_id=question.id,
                                                     tag_id=tag.id) for tag in sample(tags, k=3))
         question_tags_relation.objects.bulk_create(relations)
+        print("\tquestion's tags are generated")
 
         likes = sum([self.add_likes(q, users) for q in questions], [])
         Rating.objects.bulk_create(likes)
+        print("\tquestion's likes are generated")
 
         answers = [[Answer(
             author=u, question=question, text=fake.text(), is_right=random.choice([True, False])
@@ -39,11 +43,16 @@ class Command(BaseCommand):
 
         answers = sum(answers, [])
         Answer.objects.bulk_create(answers)
+        print(f"\tanswers are generated")
 
         answers = list(Answer.objects.all())
 
-        likes = sum([self.add_likes(an, users) for an in answers], [])
-        Rating.objects.bulk_create(likes)
+        print(f"\tstart batch generating likes")
+        from more_itertools import chunked
+        for chunk_answers in tqdm(chunked(answers, 1000), total=len(answers) // 1000):
+            likes = [self.add_likes(an, users) for an in chunk_answers]
+            likes = sum(likes, [])
+            Rating.objects.bulk_create(likes)
 
     def add_likes(self, tolike, users, maxlikes=15):
         likes = random.randint(0, maxlikes)

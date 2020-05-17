@@ -1,18 +1,21 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-  <div class="row">
-    <div class="col-10">
-      <a href="{% url 'tag' tag_name=tag_name %}"><h3 style="margin-bottom: 15px;">Tag: {{tag_name}}</h3></a>
+<div class="row">
+  <div class="col-10">
+    <a href="{% url 'tag' tag_name=tag_name %}"><h3 style="margin-bottom: 15px;">Tag: {{tag_name}}</h3></a>
 
-    </div>
-    {% include 'inc/ask_button.html' %}
   </div>
+  {% include 'inc/ask_button.html' %}
+</div>
 
-     {% for question in page_obj %}
-      {% include 'inc/question.html' %}
-     {% endfor %}
+{% for question in page_obj %}
+{% include 'inc/question.html' %}
+{% endfor %}
 
+<script src="{% static 'js/ajax_setup.js' %}"></script>
+<script src="{% static 'js/questions_ajax.js' %}"></script>
 
 {% include 'inc/paginator.html' %}
 

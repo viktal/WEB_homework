@@ -6,11 +6,9 @@
     <div class="row">
       <h4>Popular tags</h4>
       <h5>
-        <p>
           {% for tag in popular_tags %}
             <a href="{% url 'tag' tag_name=tag %}" >{{tag}}</a>
           {% endfor %}
-        </p>
       </h5>
     </div>
 

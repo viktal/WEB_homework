@@ -1,26 +1,26 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-  <div class="row">
-    <div class="col-10">
-      <h3>Questions</h3>
-    </div>
-      {% include 'inc/ask_button.html' %}
+<div class="row">
+  <div class="col-10">
+    <h3>Questions</h3>
   </div>
+  {% include 'inc/ask_button.html' %}
+</div>
 
-  <div class="card text my-2">
+<div class="card text my-2">
 
-    {% include 'inc/question_navbar.html' with new_css_classes="nav-link active" hot_css_classes="nav-link"%}
+  {% include 'inc/question_navbar.html' with new_css_classes="nav-link active" hot_css_classes="nav-link"%}
 
-    <div class="body">
-
-     {% for question in page_obj %}
-      {% include 'inc/question.html' %}
-     {% endfor %}
-
-    </div>
+  <div class="body">
+    {% for question in page_obj %}
+    {% include 'inc/question.html' %}
+    {% endfor %}
   </div>
+</div>
 
+  <script src="{% static 'js/ajax_setup.js' %}"></script>
+  <script src="{% static 'js/questions_ajax.js' %}"></script>
 {% include 'inc/paginator.html' %}
-
 {% endblock content %}

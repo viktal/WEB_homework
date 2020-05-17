@@ -5,7 +5,7 @@
   <div class="row">
     <div class="col-10">
       <h3 style="margin-bottom: 15px;">Settings</h3>
-      <form method="post" novalidate>
+      <form method="post" enctype="multipart/form-data" novalidate>
         {% csrf_token %}
 <!--        {% if form.errors %}-->
 <!--        <p>-->

@@ -10,7 +10,7 @@
         </form>
 
         <div class="media ml-3 my-0">
-          <img src="{% static 'img/cat.jpg' %}" width="40" height="40" class=" img-thumbnail">
+          <img src="{{ request.user.avatar.url }}" width="40" height="40" class=" img-thumbnail">
           <div class="media-body">
             <h6 class="mt-0 ml-2 text-light"> {{ request.user.username }} </h6>
 

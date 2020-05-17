@@ -18,8 +18,12 @@ from django.urls import path
 from app import views
 from django.conf.urls.static import static
 from askme import settings
+from django.conf import settings
+from django.urls import include, path  # For django versions from 2.0 and up
+
 
 urlpatterns = [
+
     path('index/', views.index, name='index'),
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
@@ -33,5 +37,15 @@ urlpatterns = [
     path('tag/<str:tag_name>/', views.tag, name='tag'),
     path('like/', views.like, name='like'),
     path('dislike/', views.dislike, name='dislike'),
+    path('answer_like/', views.answer_like, name='answer_like'),
+    path('answer_dislike/', views.answer_dislike, name='answer_dislike'),
+    path('answer_correct/', views.answer_correct, name='answer_correct'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns

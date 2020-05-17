@@ -1,19 +1,21 @@
 {% extends 'base.html' %}
 {% load bootstrap4 %}
+{% load static %}
 
 {% block content %}
 {% include 'inc/question.html' %}
-<h5 style="margin-bottom: 15px; margin-top: 10px;"> Answers(
-  {% if question.count_answers is None %}
-  	0
-  {% else %}
-  	{{ question.count_answers }}
-  {% endif %}
-  )</h5>
+<h5 style="margin-bottom: 15px; margin-top: 10px;">
+  Answers( {{ question.count_answers|default:0}} )
+</h5>
 
 {% for answer in page_obj %}
 {% include 'inc/answer.html' %}
 {% endfor %}
+
+<script src="{% static 'js/ajax_setup.js' %}"></script>
+<script src="{% static 'js/questions_ajax.js' %}"></script>
+<script src="{% static 'js/answers_ajax.js' %}"></script>
+
 {% include 'inc/paginator.html' %}
 <form method="post" novalidate>
   {% csrf_token %}
@@ -25,8 +27,6 @@
     Save
   </button>
   {% endbuttons %}
-
 </form>
-
 
 {% endblock content %}
