@@ -11,7 +11,7 @@
           <img class="img-thumbnail mx-2" height="64" src="{{ question.author.avatar.url }}" width="64">
         </div>
 
-{#        {% if request.user.is_authenticated %}#}
+        {% if request.user.is_authenticated %}
           {% if question.user_rate > 0 %}
             <div class="row pl-3 pane">
               <button aria-label="Left Align" class="btn btn-xs p-1" type="button" style="color: #12b706">
@@ -42,17 +42,17 @@
           </div>
           {% endif %}
 
-{#        {% else %}#}
-{#          <div class="row pl-3 pane">#}
-{#            <button aria-label="Left Align" class="btn btn-xs p-1" type="button" style="color: #525252">#}
-{#              <i aria-hidden="true" class="oi oi-chevron-top"></i>#}
-{#            </button>#}
-{##}
-{#            <button aria-label="Left Align" class="btn btn-default p-1" type="button" style="color: #525252">#}
-{#               <i aria-hidden="true" class="oi oi-chevron-bottom"></i>#}
-{#            </button>#}
-{#          </div>#}
-{#        {% endif %}#}
+        {% else %}
+          <div class="row pl-3 pane">
+            <button aria-label="Left Align" class="btn btn-xs p-1" type="button" style="color: #525252">
+              <i aria-hidden="true" class="oi oi-chevron-top"></i>
+            </button>
+
+            <button aria-label="Left Align" class="btn btn-default p-1" type="button" style="color: #525252">
+               <i aria-hidden="true" class="oi oi-chevron-bottom"></i>
+            </button>
+          </div>
+        {% endif %}
 
       </div>
 
