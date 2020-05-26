@@ -1,6 +1,6 @@
 $(".like-click").click(function (event) {
     $.ajax({
-        url: 'http://127.0.0.1:8000/like/',
+        url: 'http://127.0.0.1/like/',
         data: {"like-id": event.target.getAttribute("like-id")},
         type: 'post', // This is the default though, you don't actually need to always mention it
         success: function (data) {
@@ -22,7 +22,7 @@ $(".like-click").click(function (event) {
 
 $(".dislike-click").click(function (event) {
     $.ajax({
-        url: 'http://127.0.0.1:8000/dislike/',
+        url: 'http://127.0.0.1/dislike/',
         data: {"dislike-id": event.target.getAttribute("dislike-id")},
         type: 'post', // This is the default though, you don't actually need to always mention it
         success: function (data) {

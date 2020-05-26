@@ -9,7 +9,19 @@ from app import forms
 
 from app.models import Question, Answer, Tag, User, Rating
 
-COUNT_OBJ_IN_PAGE = 20
+COUNT_OBJ_IN_PAGE = 10
+
+# gunicorn --bind 127.0.0.1:8005 askme.wsgi
+def app_wsgi(request):
+    lines = ["Hello, world!"]
+
+    for name, params in [("GET", request.GET), ("POST", request.POST)]:
+        lines.append(f"{name} parameters: ")
+        for key, value in params.items():
+            lines.append(f"{key}:{value}")
+
+    response_body = "<br>".join(lines)
+    return HttpResponse(status=200, content=response_body.encode())
 
 
 @login_required
@@ -96,55 +108,70 @@ def index(request):
 
 
 def like(request):
-    like = Rating(
-            object_id=int(request.POST['like-id']),
-            content_type=ContentType.objects.get_for_model(Question),
-            author=request.user,
-            rate=1
-    )
-    like.save()
-    return HttpResponse(status=200)
+    if not request.user.is_authenticated:
+        return HttpResponse(status=401)
+    else:
+        like = Rating(
+                object_id=int(request.POST['like-id']),
+                content_type=ContentType.objects.get_for_model(Question),
+                author=request.user,
+                rate=1
+        )
+        like.save()
+        return HttpResponse(status=200)
 
 
 def dislike(request):
-    dislike = Rating(
-            object_id=int(request.POST['dislike-id']),
-            content_type=ContentType.objects.get_for_model(Question),
-            author=request.user,
-            rate=-1
-    )
-    dislike.save()
-    return HttpResponse(status=200)
+    if not request.user.is_authenticated:
+        return HttpResponse(status=401)
+    else:
+        dislike = Rating(
+                object_id=int(request.POST['dislike-id']),
+                content_type=ContentType.objects.get_for_model(Question),
+                author=request.user,
+                rate=-1
+        )
+        dislike.save()
+        return HttpResponse(status=200)
 
 
 def answer_like(request):
-    like = Rating(
-            object_id=int(request.POST['anlike-id']),
-            content_type=ContentType.objects.get_for_model(Answer),
-            author=request.user,
-            rate=1
-    )
-    like.save()
-    return HttpResponse(status=200)
+    if not request.user.is_authenticated:
+        return HttpResponse(status=401)
+    else:
+        like = Rating(
+                object_id=int(request.POST['anlike-id']),
+                content_type=ContentType.objects.get_for_model(Answer),
+                author=request.user,
+                rate=1
+        )
+        like.save()
+        return HttpResponse(status=200)
 
 
 def answer_dislike(request):
-    dislike = Rating(
-            object_id=int(request.POST['andislike-id']),
-            content_type=ContentType.objects.get_for_model(Answer),
-            author=request.user,
-            rate=-1
-    )
-    dislike.save()
-    return HttpResponse(status=200)
+    if not request.user.is_authenticated:
+        return HttpResponse(status=401)
+    else:
+        dislike = Rating(
+                object_id=int(request.POST['andislike-id']),
+                content_type=ContentType.objects.get_for_model(Answer),
+                author=request.user,
+                rate=-1
+        )
+        dislike.save()
+        return HttpResponse(status=200)
 
 
 def answer_correct(request):
-    id = (request.POST['correct-id'])[7:]
-    answer = Answer.objects.get(pk=int(id))
-    answer.is_right = True
-    answer.save()
-    return HttpResponse(status=200)
+    if not request.user.is_authenticated:
+        return HttpResponse(status=401)
+    else:
+        id = (request.POST['correct-id'])[7:]
+        answer = Answer.objects.get(pk=int(id))
+        answer.is_right = True
+        answer.save()
+        return HttpResponse(status=200)
 
 
 def hot(request):
@@ -232,10 +259,6 @@ def settings(request):
 
     form = forms.UserForm(data=request.POST, files=request.FILES, instance=user)
     if form.is_valid() and form.has_changed():
-        # handle_uploaded_file(request.FILES['avatar'])
-        # user = User.objects.get(pk=request.user.pk)
-        # user.avatar = request.FILES
-        # user.save()
         form.save()
     ctx['form'] = form
     return render(request, 'settings.html', ctx)

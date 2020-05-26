@@ -19,7 +19,8 @@ from app import views
 from django.conf.urls.static import static
 from askme import settings
 from django.conf import settings
-from django.urls import include, path  # For django versions from 2.0 and up
+from django.urls import include, path
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 
 urlpatterns = [
@@ -40,9 +41,15 @@ urlpatterns = [
     path('answer_like/', views.answer_like, name='answer_like'),
     path('answer_dislike/', views.answer_dislike, name='answer_dislike'),
     path('answer_correct/', views.answer_correct, name='answer_correct'),
+    path('appwsgi/', views.app_wsgi, name='app_wsgi'),
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + staticfiles_urlpatterns()
 
+# settings.DEBUG = True
+#
+# urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + staticfiles_urlpatterns()
+
+# settings.DEBUG = False
 
 if settings.DEBUG:
     import debug_toolbar

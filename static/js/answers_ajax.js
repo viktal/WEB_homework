@@ -1,6 +1,6 @@
 $(".anlike-click").click(function (event) {
     $.ajax({
-        url: 'http://127.0.0.1:8000/answer_like/',
+        url: 'http://127.0.0.1/answer_like/',
         data: {"anlike-id": event.target.getAttribute("anlike-id")},
         type: 'post',
         success: function (data) {
@@ -22,7 +22,7 @@ $(".anlike-click").click(function (event) {
 
 $(".andislike-click").click(function (event) {
     $.ajax({
-        url: 'http://127.0.0.1:8000/answer_dislike/',
+        url: 'http://127.0.0.1/answer_dislike/',
         data: {"andislike-id": event.target.getAttribute("andislike-id")},
         type: 'post',
         success: function (data) {
@@ -44,7 +44,7 @@ $(".andislike-click").click(function (event) {
 
 $(".correct-click").click(function (event) {
     $.ajax({
-        url: 'http://127.0.0.1:8000/answer_correct/',
+        url: 'http://127.0.0.1/answer_correct/',
         data: {"correct-id": event.target.getAttribute("correct-id")},
         type: 'post',
         success: function (data) {
